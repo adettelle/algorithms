@@ -14,14 +14,15 @@ func main() {
 	var k int
 	fmt.Sscan(scanner.Text(), &k)
 
-	matrix := make([][]int, 4)
+	const size = 4
+	matrix := make([][]int, size)
 
-	for i := 0; i < 4; i++ {
+	for i := 0; i < size; i++ {
 		scanner.Scan()
 		line := scanner.Text()
 
-		row := make([]int, 4)
-		for j := 0; j < 4; j++ {
+		row := make([]int, size)
+		for j := 0; j < size; j++ {
 			if line[j] == '.' {
 				row[j] = 0
 			} else {
@@ -30,14 +31,14 @@ func main() {
 		}
 		matrix[i] = row
 	}
-	fmt.Println("k =", k)
-	fmt.Println(matrix)
+
 	x := Search(k, matrix)
 	fmt.Println(x)
 }
 
 func Search(k int, matrix [][]int) int {
-	n := k * 2
+	players := 2
+	n := k * players
 	count := 0
 	nums := map[int]int{}
 
