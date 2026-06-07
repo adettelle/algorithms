@@ -17,7 +17,7 @@ func main() {
 	n := readInt(scanner)
 	arr := readArray(scanner)
 
-	res := getNearestZeroDistances(arr, n)
+  res := getNearestZeroDistances(arr, n)
 
 	for _, num := range res {
 		b.WriteString(strconv.Itoa(num))
