@@ -80,7 +80,7 @@ func TestSearch(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		res := Search(tt.k, tt.matrix)
+		res := Search(tt.k, tt.matrix, players)
 		if res != tt.expected {
 			t.Errorf("Test: %s, expected result: %d, result: %d", tt.name, tt.expected, res)
 		}

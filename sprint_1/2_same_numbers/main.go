@@ -7,6 +7,8 @@ import (
 	"os"
 )
 
+const players = 2
+
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 
@@ -32,12 +34,12 @@ func main() {
 		matrix[i] = row
 	}
 
-	x := Search(k, matrix)
+	x := Search(k, matrix, players)
 	fmt.Println(x)
 }
 
-func Search(k int, matrix [][]int) int {
-	players := 2
+func Search(k int, matrix [][]int, players int) int {
+
 	n := k * players
 	count := 0
 	nums := map[int]int{}
