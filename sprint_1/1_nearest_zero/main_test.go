@@ -69,7 +69,8 @@ func TestNearestZero(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		res := Zeros(tt.arr)
+		res := getNearestZeroDistances(tt.arr, tt.n)
+
 		if !reflect.DeepEqual(res, tt.expected) {
 			t.Errorf("Test: %s, expected result: %v, result: %v", tt.name, tt.expected, res)
 		}
