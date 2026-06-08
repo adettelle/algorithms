@@ -8,11 +8,12 @@ type ListNode struct {
 }
 
 func Solution(head *ListNode, idx int) *ListNode {
-	if idx == 0 {
-		if head != nil {
-			return head.next
-		}
+	if head == nil {
 		return nil
+	}
+
+	if idx == 0 {
+		return head.next
 	}
 
 	currentNode := head
@@ -21,7 +22,7 @@ func Solution(head *ListNode, idx int) *ListNode {
 		currentNode = currentNode.next
 	}
 
-	if currentNode.next == nil {
+	if currentNode == nil || currentNode.next == nil {
 		return head
 	}
 
