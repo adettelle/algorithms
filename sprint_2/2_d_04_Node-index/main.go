@@ -29,7 +29,7 @@ func main() {
 	node2 := ListNode{"node2", &node3}
 	node1 := ListNode{"node1", &node2}
 	node0 := ListNode{"node0", &node1}
-	idx := Solution(&node0, "node5")
+	idx := Solution(&node0, "node1")
 	fmt.Println(idx)
 }
 
