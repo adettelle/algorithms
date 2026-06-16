@@ -1,0 +1,54 @@
+52
+8
+push_front 842
+pop_back
+push_front 576
+push_front -853
+pop_back
+push_front 123
+push_front -236 
+pop_front       // 123 -853
+push_back 840
+pop_front        // - 853 840
+push_back 740
+push_back 347
+pop_front         // 840 740 347
+push_front -767
+push_front -711
+push_back -7
+pop_front         // -767 840 740 347 -1
+pop_back
+pop_back
+pop_back
+pop_back
+pop_front          // 
+push_back -215
+push_front 540
+pop_front
+push_front -293
+pop_back
+pop_back
+pop_front
+pop_back
+push_back 873
+push_front 47
+push_back -238
+push_front -575  // -575 47 873 -238
+pop_front
+push_front -916
+push_front 292
+push_back 302
+push_front 456
+push_back 92
+push_back -422
+push_back 890
+push_back -100 // 456 292 -916 47 873 -238 302 92 // -422 890 -100
+pop_back
+push_front -356
+pop_front
+push_front 430
+push_front 469
+push_back -56
+push_front 273
+pop_back
+pop_back
