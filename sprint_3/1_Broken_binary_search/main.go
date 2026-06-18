@@ -1,3 +1,28 @@
+/*
+-- ПРИНЦИП РАБОТЫ --
+По заданию на вход получаем сдвинутый циклический строго возрастающий массив.
+То есть массив состоит из двух возрастающих частей.
+Сначала мы ищем индекс максимального элемента, таким образом получаем
+две отсортированные части исходного массива.
+Далее производим бинарный поиск элемента в этих частях и возвращаем его индекс.
+
+-- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
+После нахождения индекса максимума массив разбивается на две части.
+Обе части строго возрастают.
+Следовательно для каждой из них корректно работает обычный бинарный поиск binarySearch.
+Если искомый элемент принадлежит массиву, то он находится либо в arrLeft, либо в arrRight.
+Функция выполняет бинарный поиск сначала в левой части, затем в правой.
+При нахождении элемента в правой части локальный индекс корректно переводится в глобальный.
+
+-- ВРЕМЕННАЯ СЛОЖНОСТЬ --
+Временная сложность бинарного поиска равна O(logn), потому что на каждом шаге алгоритм
+делит область поиска пополам.
+
+-- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
+Память, затрачиваемая на выполнение бинарного поиска, составляет O(1),
+так как он не требует дополнительной памяти, кроме нескольких переменных
+для хранения индексов.
+*/
 package main
 
 import (
@@ -26,14 +51,15 @@ func main() {
 	*/
 
 	a := []int{8, 10, 0, 2, 4}
-	fmt.Println(" ------------ ", binarySearchMax(a))
+	fmt.Println(" array = {8, 10, 0, 2, 4};", "max idx =", binarySearchMax(a))
 
 	arr4 := []int{99, 100, 0, 1, 4, 5, 7, 12, 15, 19}
 	// fmt.Println(binarySearchMax(arr4))
 	fmt.Println(partArray(arr4, binarySearchMax(arr4)))
-	fmt.Println(brokenSearch(arr4, 12))  // 7
-	fmt.Println(brokenSearch(arr4, 100)) // 2
-	fmt.Println(brokenSearch(arr4, 1))   // 3
+	fmt.Println(brokenSearch(arr4, 12)) // 7
+
+	// fmt.Println(brokenSearch(arr4, 100)) // 2
+	// fmt.Println(brokenSearch(arr4, 1))   // 3
 
 }
 
@@ -80,7 +106,7 @@ func binarySearchMax(arr []int) int {
 		if arr[middle] >= arr[middle-1] && arr[middle] > arr[middle+1] {
 			// fmt.Println(" 333 idx =", middle)
 			return middle
-		} else if arr[middle] >= arr[left] { // TODO
+		} else if arr[middle] >= arr[left] {
 			left = middle + 1
 		} else {
 			right = middle - 1
@@ -100,6 +126,7 @@ func brokenSearch(arr []int, k int) int {
 
 	arrLeft, arrRight := partArray(arr, binarySearchMax(arr))
 	fmt.Println(arrLeft, arrRight)
+
 	if len(arrLeft) != 0 {
 		idx = binarySearch(arrLeft, k)
 		if idx != -1 {
