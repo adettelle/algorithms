@@ -65,7 +65,7 @@ func TestBrokenSearch(t *testing.T) {
 			0,
 		},
 		{
-			"Test_last number", // TODO
+			"Test_last number",
 			[]int{8, 10, 0, 2, 4},
 			4,
 			4,

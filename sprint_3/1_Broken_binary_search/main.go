@@ -54,7 +54,6 @@ func main() {
 	fmt.Println(" array = {8, 10, 0, 2, 4};", "max idx =", binarySearchMax(a))
 
 	arr4 := []int{99, 100, 0, 1, 4, 5, 7, 12, 15, 19}
-	// fmt.Println(binarySearchMax(arr4))
 	fmt.Println(partArray(arr4, binarySearchMax(arr4)))
 	fmt.Println(brokenSearch(arr4, 12)) // 7
 
@@ -66,8 +65,6 @@ func main() {
 // Binary Search of max element of array which consist of two sorted parts
 // returns index of max element
 func binarySearchMax(arr []int) int {
-	fmt.Println("binarySearchMax: ", arr, "len = ", len(arr))
-
 	if len(arr) == 1 {
 		return 0
 	}
@@ -76,12 +73,10 @@ func binarySearchMax(arr []int) int {
 	right := len(arr) - 1
 
 	if arr[right] >= arr[left] {
-		fmt.Println(" 111 idx =", right)
 		return right
 	}
 
 	if arr[left] > arr[left+1] {
-		fmt.Println(" 222 idx =", left)
 		return left
 	}
 
@@ -99,12 +94,7 @@ func binarySearchMax(arr []int) int {
 			}
 		}
 
-		// fmt.Println("mid-1 =", middle-1, "; mid =", middle, "; mid+1 =", middle+1)
-		// fmt.Println("mid-1 =", arr[middle-1], "; mid =", arr[middle], "; mid+1 =", arr[middle+1])
-		// fmt.Println("left =", left, "right =", right)
-
 		if arr[middle] >= arr[middle-1] && arr[middle] > arr[middle+1] {
-			// fmt.Println(" 333 idx =", middle)
 			return middle
 		} else if arr[middle] >= arr[left] {
 			left = middle + 1
@@ -116,7 +106,7 @@ func binarySearchMax(arr []int) int {
 }
 
 func partArray(arr []int, idx int) ([]int, []int) {
-	fmt.Println("index =", idx)
+	// fmt.Println("index =", idx)
 	return arr[:idx+1], arr[idx+1:]
 }
 
@@ -125,7 +115,7 @@ func brokenSearch(arr []int, k int) int {
 	idx := 0
 
 	arrLeft, arrRight := partArray(arr, binarySearchMax(arr))
-	fmt.Println(arrLeft, arrRight)
+	// fmt.Println(arrLeft, arrRight)
 
 	if len(arrLeft) != 0 {
 		idx = binarySearch(arrLeft, k)

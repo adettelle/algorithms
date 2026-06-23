@@ -1,4 +1,4 @@
-// https://contest.yandex.ru/contest/23815/run-report/163155692/
+// https://contest.yandex.ru/contest/23815/run-report/163238308/
 
 /*
 -- ПРИНЦИП РАБОТЫ --
@@ -36,16 +36,18 @@
 а суммарная сложность O(n^2).
 
 -- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
-Алгоритм выполняет сортироку на месте, не создавая дополнительных массивов.
-Пространственная сложность алгоритма O(1). Но дополнительная память расходуется
-на стек рекурсивных вызовов. В среднем случае глубина рекурсии составляет O(log n),
-а в худшем случае — O(n).
+Алгоритм выполняет сортироку на месте, не создавая дополнительных массивов,
+кроме фиксированного числа переменных.
+Пространственная сложность алгоритма без учёта рекурсивного стека O(1).
+Но дополнительная память расходуется на стек рекурсивных вызовов.
+В среднем случае глубина рекурсии составляет O(log n), а в худшем случае — O(n).
 */
 package main
 
 import (
 	"bufio"
 	"fmt"
+	"math/rand"
 	"os"
 	"strconv"
 	"strings"
@@ -56,119 +58,55 @@ func main() {
 	n := readInt(scanner)
 	students := readArray(scanner, n)
 
-	quickSortWithComparator(students, biggerComparator)
+	quickSortWithComparator(students, Less)
 	for _, student := range students {
 		fmt.Println(student.name)
 	}
 }
 
-/*
-	func lessComparator(a, b Student) bool {
-		if a.points < b.points {
-			return true
-		}
-
-		if a.points == b.points {
-			if a.fine > b.fine {
-				return true
-			}
-		}
-
-		if a.points == b.points && a.fine == b.fine {
-			if a.name > b.name {
-				return true
-			}
-		}
-
-		return false
-	}
-*/
-
-func biggerComparator(a, b Student) bool {
-	if a.points > b.points {
-		return true
+func Less(a, b Student) bool {
+	if a.points != b.points { // >
+		return a.points > b.points
 	}
 
-	if a.points == b.points {
-		if a.fine < b.fine {
-			return true
-		}
+	if a.fine != b.fine {
+		return a.fine < b.fine
 	}
 
-	if a.points == b.points && a.fine == b.fine {
-		if a.name < b.name {
-			return true
-		}
-	}
-
-	return false
+	return a.name < b.name
 }
 
-func quickSortWithComparator(arr []Student, comparator func(Student, Student) bool) []Student {
+func quickSortWithComparator(arr []Student, less func(Student, Student) bool) {
 	if len(arr) < 2 {
-		return arr
+		return
 	}
 
-	pivot := arr[len(arr)-1]
-	left := 0
+	pivot := arr[rand.Intn(len(arr)-1)]
 
-	for i := 0; i < len(arr)-1; i++ {
-		if comparator(arr[i], pivot) {
-			arr[i], arr[left] = arr[left], arr[i]
+	left := 0
+	right := len(arr) - 1
+
+	for left <= right {
+		for left <= right && less(arr[left], pivot) {
 			left++
 		}
-	}
-	arr[left], arr[len(arr)-1] = arr[len(arr)-1], arr[left]
-	quickSortWithComparator(arr[:left], comparator)
-	quickSortWithComparator(arr[left+1:], comparator)
-
-	return arr
-}
-
-/*
-func quickSortWithComparator(arr []int, less func(int, int) bool) []int {
-	if len(arr) < 2 {
-		return arr
-	}
-
-	pivot := arr[len(arr)-1]
-	left := 0
-
-	for i := 0; i < len(arr)-1; i++ {
-		if less(arr[i], pivot) {
-			arr[i], arr[left] = arr[left], arr[i]
+		for left <= right && less(pivot, arr[right]) {
+			right--
+		}
+		if left <= right {
+			arr[left], arr[right] = arr[right], arr[left]
 			left++
+			right--
 		}
 	}
-	arr[left], arr[len(arr)-1] = arr[len(arr)-1], arr[left]
-	quickSortWithComparator(arr[:left], less)
-	quickSortWithComparator(arr[left+1:], less)
 
-	return arr
-}
-*/
-/*
-func quickSort(arr []int) []int {
-	if len(arr) < 2 {
-		return arr
+	if right > 0 {
+		quickSortWithComparator(arr[:right+1], less)
 	}
-
-	pivot := arr[len(arr)-1]
-	left := 0
-
-	for i := 0; i < len(arr)-1; i++ {
-		if arr[i] < pivot {
-			arr[i], arr[left] = arr[left], arr[i]
-			left++
-		}
+	if left < len(arr) {
+		quickSortWithComparator(arr[left:], less)
 	}
-	arr[left], arr[len(arr)-1] = arr[len(arr)-1], arr[left]
-	quickSort(arr[:left])
-	quickSort(arr[left+1:])
-
-	return arr
 }
-*/
 
 func readInt(scanner *bufio.Scanner) int {
 	scanner.Scan()

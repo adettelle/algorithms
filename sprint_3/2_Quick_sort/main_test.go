@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestBiggerComparator(t *testing.T) {
+func TestLess(t *testing.T) {
 	tests := []struct {
 		name     string
 		s1       Student
@@ -45,14 +45,13 @@ func TestBiggerComparator(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		res := biggerComparator(tt.s1, tt.s2)
+		res := Less(tt.s1, tt.s2)
 		if res != tt.expected {
 			t.Errorf("%s: expected: %v, result: %v", tt.name, tt.expected, res)
 		}
 	}
 }
 
-// quickSortWithComparator
 func TestQuickSortWithComparator(t *testing.T) {
 	tests := []struct {
 		name       string
@@ -69,7 +68,7 @@ func TestQuickSortWithComparator(t *testing.T) {
 				{name: "rita", points: 2, fine: 90},
 				{name: "timofey", points: 4, fine: 80},
 			},
-			biggerComparator,
+			Less,
 			[]Student{
 				{name: "gena", points: 6, fine: 1000},
 				{name: "timofey", points: 4, fine: 80},
@@ -87,7 +86,7 @@ func TestQuickSortWithComparator(t *testing.T) {
 				{name: "gena", points: 0, fine: 0},
 				{name: "timofey", points: 0, fine: 0},
 			},
-			biggerComparator,
+			Less,
 			[]Student{
 				{name: "alla", points: 0, fine: 0},
 				{name: "gena", points: 0, fine: 0},
@@ -99,9 +98,9 @@ func TestQuickSortWithComparator(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		res := quickSortWithComparator(tt.students, tt.comparator)
-		if !reflect.DeepEqual(res, tt.expected) {
-			t.Errorf("%s: expected: %v, result: %v", tt.name, tt.expected, res)
+		quickSortWithComparator(tt.students, tt.comparator)
+		if !reflect.DeepEqual(tt.students, tt.expected) {
+			t.Errorf("%s: expected: %v, result: %v", tt.name, tt.expected, tt.students)
 		}
 	}
 }
