@@ -1,0 +1,191 @@
+/*
+Работающий вариант, но замечания:
+1) сортировка – оверхэд, лучше брать 5 максимумов
+2) взятие топ-N должно быть как минимум в отдельной функции, 
+куда мы и будем передавать queriesToShow
+*/
+
+// https://contest.yandex.ru/contest/24414/run-report/163459456/
+
+/*
+-- ПРИНЦИП РАБОТЫ --
+По заданию на вход получаем n документов, каждый из которых
+представляет собой текст из слов. Индексируем все слова во всех документах.
+
+В итоге имеем map, где ключом является слово, а в значении находися
+список сктруктур, где хранятся позиция документа и количество слова в нём.
+
+Пример документов:
+cat dog (1)
+cat     (2)
+cat cat (3)
+
+Итоговая карта релевантности:
+cat: [{1; 1} {2; 1} {3; 2}]
+dog: [{1; 1}]
+
+Далее получаем релевантность докуметов.
+Релевантность документа оценивается следующим образом:
+для каждого уникального слова из запроса берётся число его вхождений в документ,
+полученные числа для всех слов из запроса суммируются.
+Итоговая сумма и является релевантностью документа.
+Чем больше сумма, тем больше документ подходит под запрос.
+
+Таким образом, для запроса "cat cat dog" повторяющиеся слова будут удалены,
+запрос будет "cat dog".
+И по таблице слов будем искать вхождения каждого документа и
+суммировать его баллы: {1; 2} {2; 1} {3; 2}
+Далее отсортируем по возрастанию балов {1; 2} {3; 2} {2; 1}
+И выведем только позиции документов:
+1 3 2
+
+-- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
+После выполнения makeMap для каждого слова из документов в списке
+содержится пара (docPos, points), где points - число вхождений слова в документе.
+Алгоритм проходит по каждому документу и
+каждому слову в нём. Каждый раз при встрече слова увеличивается счётчик
+и все вхождения одного документа суммируются.
+Далее в алгоритме вычисления релевантностей для каждого слова запроса
+(слова в запросе заранее приведены к уникальности) добавляется
+именно его вклад в релевантность документа.
+
+
+-- ВРЕМЕННАЯ СЛОЖНОСТЬ --
+Общая временная сложность: O(N*L) + O(M*(K+R)+RlogR), где
+
+N — число документов
+L — среднее количество слов в документе
+M — число запросов
+K — среднее число слов в запросе
+R — число документов, обработанных запросом
+
+Построение индекса makeMap: проходимся по всем словам всех документов:
+O(N*L)
+
+Обработка одного запроса getRelevance: O(K+R)
+Перебираем все слова в запросе O(K)
+Документы, обработанные запросом O(R)
+Сортировка документов с их весами sortStructs(wordInDocs): O(RlogR)
+Итого для всех запросов: O(M*(K+R)+RlogR)
+
+-- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
+Построение индекса makeMap: проходимся по всем словам всех документов: O(N*L).
+Результаты всех запросов не храним  в памяти, поэтому O(R).
+Итоговая пространственная сложность O(N*L + К)
+*/
+
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"slices"
+	"sort"
+	"strconv"
+	"strings"
+)
+
+func main() {
+	scanner := bufio.NewScanner(os.Stdin)
+
+	scanner.Scan()
+	n, _ := strconv.Atoi(scanner.Text())
+
+	docs := make([][]string, n)
+	for i := 0; i < n; i++ {
+		scanner.Scan()
+		docs[i] = strings.Fields(scanner.Text())
+	}
+
+	scanner.Scan()
+	m, _ := strconv.Atoi(scanner.Text())
+
+	const queriesToShow = 5
+
+	writer := bufio.NewWriter(os.Stdout)
+	defer writer.Flush()
+
+	index := makeMap(docs)
+
+	for i := 0; i < m; i++ {
+		scanner.Scan()
+		query := strings.Fields(scanner.Text())
+
+		slices.Sort(query)
+		query = slices.Compact(query)
+
+		wordInDocs := getRelevance(query, index)
+
+		limit := min(len(wordInDocs), queriesToShow)
+		sortStructs(wordInDocs)
+
+		for i := range limit {
+			fmt.Fprint(writer, wordInDocs[i].DocPosition, " ")
+		}
+		fmt.Fprintln(writer)
+	}
+}
+
+type WordInDocs struct {
+	DocPosition int
+	WordPoints  int
+}
+
+// index := map[string][]WordInDocs
+// key - слово
+// value: список WordInDocs, где
+// DocPosition - индекс документа (с единицы);
+// Points - сколько раз слово встречается
+func makeMap(docs [][]string) map[string][]WordInDocs {
+	index := make(map[string][]WordInDocs)
+
+	for i, doc := range docs {
+		for _, word := range doc {
+			sl := index[word]
+
+			if len(sl) > 0 && sl[len(sl)-1].DocPosition == i+1 {
+				sl[len(sl)-1].WordPoints++
+				index[word] = sl
+			} else {
+				index[word] = append(index[word], WordInDocs{
+					DocPosition: i + 1,
+					WordPoints:  1,
+				})
+			}
+		}
+	}
+
+	return index
+}
+
+func getRelevance(query []string, index map[string][]WordInDocs) []WordInDocs {
+	relevance := make(map[int]int)
+
+	for _, word := range query {
+		if wordInDocs, ok := index[word]; ok {
+			for _, elem := range wordInDocs {
+				relevance[elem.DocPosition] += elem.WordPoints
+			}
+		}
+	}
+
+	res := []WordInDocs{}
+	for position, points := range relevance {
+		res = append(res, WordInDocs{
+			DocPosition: position,
+			WordPoints:  points,
+		})
+	}
+
+	return res
+}
+
+func sortStructs(relevance []WordInDocs) {
+	sort.Slice(relevance, func(i, j int) bool {
+		if relevance[i].WordPoints == relevance[j].WordPoints {
+			return relevance[i].DocPosition < relevance[j].DocPosition
+		}
+		return relevance[i].WordPoints > relevance[j].WordPoints
+	})
+}
