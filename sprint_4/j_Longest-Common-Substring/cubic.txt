@@ -1,0 +1,80 @@
+// алгоритм имеет кубическую сложность в худшем случае
+// O(n⋅m⋅min⁡(n,m))
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
+
+func main() {
+	reader := bufio.NewReader(os.Stdin)
+	var n int
+	fmt.Fscan(reader, &n)
+	arr1 := make([]int, n)
+
+	for i := range n {
+		fmt.Fscan(reader, &arr1[i])
+	}
+
+	var m int
+	fmt.Fscan(reader, &m)
+
+	arr2 := make([]int, m)
+
+	for i := range m {
+		fmt.Fscan(reader, &arr2[i])
+	}
+
+	fmt.Println(findMaxSubArray(arr1, arr2))
+}
+
+func findMaxSubArray(arr1, arr2 []int) int { // []int
+	maxLen := 0
+	// index := 0
+	// idx := 0
+
+	for i := range arr1 {
+		for j := range arr2 {
+			count := 0
+			// if arr1[i] == arr2[j] {
+			// idx := i
+			for i+count < len(arr1) && j+count < len(arr2) && arr1[i+count] == arr2[j+count] {
+
+				// idx = i
+				count++
+			}
+			if count > maxLen {
+				maxLen = count
+				// index = idx
+				count = 0
+				// idx = 0
+			}
+			// }
+		}
+	}
+	return maxLen // arr1[index : index+maxLen]
+}
+
+func findMaxSubArrayDP(a, b []int) int {
+    dp := make([][]int, len(a)+1)
+    for i := range dp {
+        dp[i] = make([]int, len(b)+1)
+    }
+
+    res := 0
+
+    for i := 1; i <= len(a); i++ {
+        for j := 1; j <= len(b); j++ {
+            if a[i-1] == b[j-1] {
+                dp[i][j] = dp[i-1][j-1] + 1
+                if dp[i][j] > res {
+                    res = dp[i][j]
+                }
+            }
+        }
+    }
+
+    return res
+}
