@@ -17,7 +17,7 @@ func main() {
 
 	var new string
 	fmt.Fscan(reader, &new)
-	fmt.Println("line:", line, "; sample:", sample, "; new:", new)
+	// fmt.Println("line:", line, "; sample:", sample, "; new:", new)
 
 	newLine := strings.Replace(line, sample, new, -1)
 	fmt.Println(newLine)
